@@ -1,5 +1,3 @@
-
-
 print("URL: " + (url))
 
 json_data = requests.get(url).json()
