@@ -23,6 +23,8 @@ while True:
         print("Directions from " + (orig) + " to " + (dest))
         print("Trip Duration: " + (json_data["route"]["formattedTime"]))
         print("Kilometers: " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
+        print("Roudn Trip in Kilometers: " + str("{:.2f}".format(((json_data["route"]["distance"])*1.61)*2)))
+        print("Approx. Equivalent in Steps: " + str("{:.2f}".format(((json_data["route"]["distance"])*1.61)* 1312)))
         print("Fuel Used (Ltr): " +str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
         print("=============================================")
         for each in json_data["route"]["legs"][0]["maneuvers"]:
