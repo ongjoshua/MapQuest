@@ -32,7 +32,6 @@ def configLocation(orig, dest):
             duration = str(json_data["route"]["formattedTime"])
             kilometer  = str("{:.2f}".format(km_calculated)) + " km"
             miles  = str("{:.2f}".format( km_calculated * 0.621371 )) + " miles"
-            roundtrip =  str("{:.2f}".format(km_calculated * 2))  + " km"
             steps = str("{:.2f}".format( km_calculated * 1312 )) + " steps"
             fuel = str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)) + " ltr"
 
@@ -42,6 +41,9 @@ def configLocation(orig, dest):
             url = (main_api + urllib.parse.urlencode({"key": key, "from":dest, "to":orig}))
             json_data = requests.get(url).json()
             json_status = json_data["info"]["statuscode"]
+            roundtrip_km =  (json_data["route"]["distance"])*1.61
+            roundtrip =  str("{:.2f}".format(roundtrip_km + km_calculated))  + " km"
+
 
             for each in json_data["route"]["legs"][0]["maneuvers"]:
                 roundtripdirections.append((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
