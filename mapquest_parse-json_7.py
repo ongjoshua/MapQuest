@@ -10,7 +10,8 @@ from flask import *
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "fZadaFOY22VIEEemZcBFfxl5vjSXIPpZ"
 def configLocation(orig, dest):
-    directions = []
+    directions = [] 
+    roundtripdirections = []
     while True:
 
         # orig = input("Starting Location: ")
@@ -26,16 +27,26 @@ def configLocation(orig, dest):
         json_data = requests.get(url).json()
         json_status = json_data["info"]["statuscode"]
         if json_status == 0:
+            km_calculated = (json_data["route"]["distance"])*1.61
+            
             duration = str(json_data["route"]["formattedTime"])
-            kilometer  = str("{:.2f}".format((json_data["route"]["distance"])*1.61)) + " km"
-            roundtrip =  str("{:.2f}".format(((json_data["route"]["distance"])*1.61)*2))  + " km"
-            steps = str("{:.2f}".format(((json_data["route"]["distance"])*1.61)* 1312)) + " steps"
+            kilometer  = str("{:.2f}".format(km_calculated)) + " km"
+            miles  = str("{:.2f}".format( km_calculated * 0.621371 )) + " miles"
+            roundtrip =  str("{:.2f}".format(km_calculated * 2))  + " km"
+            steps = str("{:.2f}".format( km_calculated * 1312 )) + " steps"
             fuel = str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)) + " ltr"
 
             for each in json_data["route"]["legs"][0]["maneuvers"]:
                 directions.append((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+            
+            url = (main_api + urllib.parse.urlencode({"key": key, "from":dest, "to":orig}))
+            json_data = requests.get(url).json()
+            json_status = json_data["info"]["statuscode"]
 
-            return [orig, dest, duration, kilometer, roundtrip, steps, fuel, directions ]
+            for each in json_data["route"]["legs"][0]["maneuvers"]:
+                roundtripdirections.append((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+                       
+            return [orig, dest, duration, kilometer, roundtrip, steps, fuel, directions, miles, roundtripdirections ]
 
         elif json_status == 402:
             statusCode = "Status Code: " + str(json_status)
